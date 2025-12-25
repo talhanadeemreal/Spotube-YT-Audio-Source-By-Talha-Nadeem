@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "name": "YouTube Audio Source",
+  "author": "Antigravity",
+  "description": "YouTube Data API v3 Audio Source",
+  "entryPoint": "YouTubeAudioSourcePlugin",
+  "apis": [
+    "localstorage"
+  ],
+  "abilities": [
+    "audio-source"
+  ],
+  "repository": "https://github.com/spotube/spotube",
+  "pluginApiVersion": "2.0.0"
+}

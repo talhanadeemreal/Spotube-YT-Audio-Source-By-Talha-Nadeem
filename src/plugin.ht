@@ -1,0 +1,53 @@
+
+// Main Audio Source Plugin Class
+class YouTubeAudioSource {
+  // Config: API Key
+  var apiKey = "AIzaSyDQ8goZaggOX_jlStD_siYKOf4vyiav4so"
+  var baseUrl = "https://www.googleapis.com/youtube/v3/search"
+
+  // Method to search/resolve track
+  // Spotube calls this when it needs a stream for a track
+  // track: The SpotubeTrack object containing details
+  func getStream(track) {
+    // 1. Construct Query
+    var query = "${track.artists[0].name} - ${track.name} audio"
+    var encodedQuery = Uri.encodeComponent(query)
+    
+    // 2. Build URL
+    var url = "${baseUrl}?part=snippet&type=video&maxResults=5&q=${encodedQuery}&key=${apiKey}"
+    
+    // 3. Make Request (Using .then() as async/await is not supported)
+    return http.get(url).then((response) {
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body)
+        var items = data["items"]
+        
+        if (items.length > 0) {
+          // Simple Algorithm: Take the first video
+          // In a real plugin, we would filter by title similarity
+          var video = items[0]
+          var videoId = video["id"]["videoId"]
+          var title = video["snippet"]["title"]
+          
+          // Debug log (optional)
+          // print("Found match: ${title} (${videoId})")
+          
+          // 4. Return SourceMatch
+          return SourceMatch(
+            id: videoId,
+            source: "youtube",
+            quality: "high", // Placeholder
+            // Add other metadata if supported by SourceMatch constructor
+          )
+        } else {
+          // No results
+          return null
+        }
+      } else {
+        // Error handling
+        // print("YouTube API Error: ${response.statusCode}")
+        return null
+      }
+    })
+  }
+}
